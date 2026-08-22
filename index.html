@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuentas del viaje</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@500;600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #EDEADF; --card: #FBF8EF; --ink: #22332B; --ink-soft: #5B6B60;
+    --green: #3F7D5C; --stamp: #C1443D; --gold: #C99A3E; --line: #C9C2AC; --radius: 4px;
+  }
+  *{ box-sizing: border-box; }
+  body{ margin:0; background: var(--paper); color: var(--ink); font-family: 'Work Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+  .wrap{ max-width: 620px; margin: 0 auto; padding: 28px 18px 80px; }
+  header{ margin-bottom: 30px; }
+  .title-row{ display:flex; align-items:baseline; gap:10px; flex-wrap: wrap; }
+  #tripName{ font-family:'Fraunces', serif; font-weight:600; font-size: 32px; border:none; background:transparent; color: var(--ink); padding:0; flex: 1; min-width: 160px; }
+  #tripName:focus{ outline: none; border-bottom: 2px dashed var(--line); }
+  .subtitle{ font-size: 13px; color: var(--ink-soft); margin-top: 4px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .sync-btn, .copy-btn{ border:1px solid var(--line); background: var(--card); color: var(--ink-soft); font-family:'IBM Plex Mono', monospace; font-size: 11px; padding: 3px 9px; border-radius: 20px; cursor:pointer; }
+  .sync-btn:hover, .copy-btn:hover{ border-color: var(--ink-soft); }
+  .share-banner{ background: var(--card); border:1px dashed var(--line); border-radius: var(--radius); padding: 10px 14px; font-size: 13px; color: var(--ink-soft); margin-bottom: 20px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .share-banner code{ font-family:'IBM Plex Mono', monospace; color: var(--ink); }
+  .eyebrow{ font-family:'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); margin: 0 0 10px; }
+  section{ margin-bottom: 34px; }
+  .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+  .chip{ background: var(--card); border:1px solid var(--line); border-radius: 20px; padding: 6px 8px 6px 14px; font-size: 14px; display:flex; align-items:center; gap:8px; }
+  .chip button{ border:none; background:none; color: var(--ink-soft); cursor:pointer; font-size:15px; line-height:1; padding: 2px 4px; }
+  .chip button:hover{ color: var(--stamp); }
+  .inline-form{ display:flex; gap:8px; }
+  input[type=text], input[type=number]{ font-family:'Work Sans', sans-serif; font-size: 15px; padding: 9px 11px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); color: var(--ink); width:100%; }
+  input:focus, select:focus{ outline: 2px solid var(--green); outline-offset: 1px; }
+  button.action{ font-family:'Work Sans', sans-serif; font-weight:600; font-size: 14px; padding: 9px 16px; border-radius: var(--radius); border: none; background: var(--ink); color: var(--paper); cursor:pointer; white-space: nowrap; }
+  button.action:hover{ background: var(--green); }
+  button.action:disabled{ background: var(--line); cursor:not-allowed; }
+  .expense-form{ background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display:grid; gap: 12px; }
+  .row2{ display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  select{ font-family:'Work Sans', sans-serif; font-size: 15px; padding: 9px 11px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); color: var(--ink); width:100%; }
+  .share-list{ display:flex; flex-wrap:wrap; gap: 10px; }
+  .share-item{ display:flex; align-items:center; gap:6px; font-size: 14px; }
+  .small-label{ font-size:12px; color: var(--ink-soft); margin-bottom: -4px; }
+  .ticket{ position:relative; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); display:grid; grid-template-columns: 1fr auto; margin-bottom: 10px; }
+  .ticket-info{ padding: 13px 16px; }
+  .ticket-desc{ font-weight:600; font-size:15px; }
+  .ticket-meta{ font-size: 12.5px; color: var(--ink-soft); margin-top: 3px; }
+  .ticket-amount{ font-family:'IBM Plex Mono', monospace; font-weight:600; font-size: 17px; padding: 13px 16px; border-left: 2px dashed var(--line); display:flex; align-items:center; position:relative; min-width: 96px; justify-content:flex-end; }
+  .ticket-amount::before, .ticket-amount::after{ content:""; position:absolute; left:-6px; width:11px; height:11px; background: var(--paper); border-radius:50%; border: 1px solid var(--line); }
+  .ticket-amount::before{ top:-6px; } .ticket-amount::after{ bottom:-6px; }
+  .ticket-del{ position:absolute; top:4px; right:4px; border:none; background:none; color: var(--ink-soft); cursor:pointer; font-size:14px; padding:2px 5px; }
+  .ticket-del:hover{ color: var(--stamp); }
+  .balance-row{ display:flex; justify-content:space-between; align-items:center; padding: 10px 4px; border-bottom: 1px solid var(--line); font-size: 14.5px; }
+  .balance-row:last-child{ border-bottom:none; }
+  .balance-amt{ font-family:'IBM Plex Mono', monospace; font-weight:600; }
+  .pos{ color: var(--green); } .neg{ color: var(--stamp); }
+  .settle{ display:flex; align-items:center; gap:12px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 9px; }
+  .stamp-badge{ font-family:'IBM Plex Mono', monospace; font-size: 10px; font-weight:600; letter-spacing: 0.05em; color: var(--stamp); border: 1.5px solid var(--stamp); border-radius: 50%; width: 42px; height:42px; display:flex; align-items:center; justify-content:center; text-align:center; transform: rotate(-8deg); flex-shrink:0; line-height:1.1; }
+  .settle-text{ font-size: 14.5px; } .settle-text b{ font-weight:600; }
+  .settle-amt{ margin-left:auto; font-family:'IBM Plex Mono', monospace; font-weight:600; font-size: 15px; white-space:nowrap; }
+  .empty{ color: var(--ink-soft); font-size: 14px; font-style: italic; padding: 6px 2px; }
+  .all-settled{ color: var(--green); font-weight:600; font-size: 14.5px; }
+  footer{ text-align:center; margin-top: 40px; }
+  .reset-btn{ border:none; background:none; color: var(--ink-soft); font-size: 12.5px; text-decoration: underline; cursor:pointer; }
+  .reset-btn:hover{ color: var(--stamp); }
+  .loading, .center-box{ text-align:center; padding: 60px 20px; color: var(--ink-soft); font-family:'IBM Plex Mono', monospace; font-size: 13px; }
+  .landing{ max-width: 420px; margin: 60px auto; text-align:center; }
+  .landing h1{ font-family:'Fraunces', serif; font-size: 30px; margin-bottom: 6px; }
+  .landing p{ color: var(--ink-soft); font-size: 14px; margin-bottom: 24px; }
+  .landing .inline-form{ text-align:left; }
+  @media (max-width: 460px){ .row2{ grid-template-columns: 1fr; } #tripName{ font-size: 26px; } }
+</style>
+</head>
+<body>
+<div class="wrap" id="app"><div class="loading">Cargando…</div></div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+let codigo = params.get('codigo');
+let data = { nombre: 'Cuentas del viaje', participantes: [], gastos: [] };
+let lastJSON = '';
+let pollTimer = null;
+
+function euros(n){ return n.toLocaleString('es-ES', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' €'; }
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+async function api(body){
+  const res = await fetch('/api/viaje' + (body ? '' : ('?codigo=' + encodeURIComponent(codigo))), body ? {
+    method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body)
+  } : { method: 'GET' });
+  const json = await res.json().catch(() => ({}));
+  if(!res.ok) throw new Error(json.error || 'Error de red');
+  return json;
+}
+
+async function cargarViaje(){
+  try{
+    const json = await api();
+    data = json;
+    lastJSON = JSON.stringify(json);
+    renderApp();
+    if(!pollTimer) pollTimer = setInterval(pollActualizacion, 6000);
+  }catch(e){
+    renderNoEncontrado(e.message);
+  }
+}
+
+async function pollActualizacion(){
+  try{
+    const json = await api();
+    const asJSON = JSON.stringify(json);
+    if(asJSON !== lastJSON){
+      const nameFocused = document.activeElement && document.activeElement.id === 'tripName';
+      data = json; lastJSON = asJSON;
+      renderApp(nameFocused);
+    }
+  }catch(e){ /* silencioso */ }
+}
+
+function computeBalances(){
+  const balances = {};
+  data.participantes.forEach(p => { balances[p.id] = { nombre: p.nombre, pagado: 0, corresponde: 0 }; });
+  data.gastos.forEach(g => {
+    if(balances[g.pagadorId]) balances[g.pagadorId].pagado += g.importe;
+    const participes = g.participantesIds.filter(id => balances[id]);
+    if(participes.length === 0) return;
+    const parte = g.importe / participes.length;
+    participes.forEach(id => { balances[id].corresponde += parte; });
+  });
+  return data.participantes.map(p => {
+    const b = balances[p.id];
+    return { id: p.id, nombre: p.nombre, pagado: b.pagado, corresponde: b.corresponde, saldo: Math.round((b.pagado - b.corresponde) * 100) / 100 };
+  });
+}
+
+function computeSettlements(balances){
+  const acreedores = balances.filter(b => b.saldo > 0.004).map(b => ({...b})).sort((a,b) => b.saldo - a.saldo);
+  const deudores = balances.filter(b => b.saldo < -0.004).map(b => ({...b, saldo: -b.saldo})).sort((a,b) => b.saldo - a.saldo);
+  const movimientos = [];
+  let i = 0, j = 0;
+  while(i < deudores.length && j < acreedores.length){
+    const deudor = deudores[i], acreedor = acreedores[j];
+    const cantidad = Math.min(deudor.saldo, acreedor.saldo);
+    if(cantidad > 0.004) movimientos.push({ de: deudor.nombre, a: acreedor.nombre, importe: Math.round(cantidad * 100) / 100 });
+    deudor.saldo -= cantidad; acreedor.saldo -= cantidad;
+    if(deudor.saldo <= 0.004) i++;
+    if(acreedor.saldo <= 0.004) j++;
+  }
+  return movimientos;
+}
+
+function renderLanding(){
+  document.getElementById('app').innerHTML = `
+    <div class="landing">
+      <h1>Cuentas del viaje</h1>
+      <p>Crea un viaje, comparte el link con el grupo y calcula quién le debe a quién.</p>
+      <div class="inline-form">
+        <input id="nombreNuevo" type="text" placeholder="Nombre del viaje (ej. Lisboa 2026)" />
+        <button class="action" id="crearBtn">Crear viaje</button>
+      </div>
+    </div>`;
+  document.getElementById('crearBtn').addEventListener('click', async () => {
+    const nombre = document.getElementById('nombreNuevo').value.trim() || 'Cuentas del viaje';
+    try{
+      const json = await api({ accion: 'crear', payload: { nombre } });
+      window.location.search = '?codigo=' + json.codigo;
+    }catch(e){ alert('No se pudo crear el viaje: ' + e.message); }
+  });
+}
+
+function renderNoEncontrado(msg){
+  document.getElementById('app').innerHTML = `
+    <div class="center-box">
+      <p>${esc(msg || 'Viaje no encontrado')}</p>
+      <p><a href="${window.location.pathname}">Crear un viaje nuevo</a></p>
+    </div>`;
+}
+
+async function mutar(accion, payload){
+  try{
+    await api({ accion, codigo, payload });
+    await cargarViaje();
+  }catch(e){ alert('No se pudo guardar: ' + e.message); }
+}
+
+function renderApp(skipNameInput){
+  const app = document.getElementById('app');
+  const balances = computeBalances();
+  const settlements = computeSettlements(balances);
+  const opciones = data.participantes.map(p => `<option value="${p.id}">${esc(p.nombre)}</option>`).join('');
+  const link = window.location.href;
+
+  app.innerHTML = `
+    <header>
+      <div class="title-row"><input id="tripName" type="text" value="${esc(data.nombre)}" /></div>
+      <div class="subtitle">Cuentas compartidas <button class="sync-btn" id="syncBtn">↻ actualizar</button></div>
+    </header>
+
+    <div class="share-banner">
+      Comparte este link con el grupo: <code id="linkTxt">${esc(link)}</code>
+      <button class="copy-btn" id="copyBtn">Copiar</button>
+    </div>
+
+    <section>
+      <p class="eyebrow">Participantes</p>
+      <div class="chips">
+        ${data.participantes.map(p => `<span class="chip">${esc(p.nombre)} <button data-remove-p="${p.id}">×</button></span>`).join('') || '<span class="empty">Añade a las personas del viaje</span>'}
+      </div>
+      <div class="inline-form">
+        <input id="newParticipante" type="text" placeholder="Nombre de la persona" />
+        <button class="action" id="addParticipanteBtn">Añadir</button>
+      </div>
+    </section>
+
+    <section>
+      <p class="eyebrow">Nuevo gasto</p>
+      <div class="expense-form">
+        <input id="gastoDesc" type="text" placeholder="¿Qué se pagó? (cena, gasolina, hotel...)" />
+        <div class="row2">
+          <div><div class="small-label">Importe</div><input id="gastoImporte" type="number" step="0.01" min="0" placeholder="0,00" /></div>
+          <div><div class="small-label">Quién pagó</div><select id="gastoPagador">${opciones || '<option value="">Añade participantes primero</option>'}</select></div>
+        </div>
+        <div>
+          <div class="small-label">Entre quiénes se reparte</div>
+          <div class="share-list" id="shareList">
+            ${data.participantes.map(p => `<label class="share-item"><input type="checkbox" value="${p.id}" class="shareCheck" checked /> ${esc(p.nombre)}</label>`).join('') || '<span class="empty">—</span>'}
+          </div>
+        </div>
+        <button class="action" id="addGastoBtn" ${data.participantes.length === 0 ? 'disabled' : ''}>Añadir gasto</button>
+      </div>
+    </section>
+
+    <section>
+      <p class="eyebrow">Gastos del viaje</p>
+      ${data.gastos.length === 0 ? '<p class="empty">Todavía no hay gastos apuntados.</p>' : data.gastos.slice().reverse().map(g => {
+        const pagador = data.participantes.find(p => p.id === g.pagadorId);
+        return `<div class="ticket">
+          <button class="ticket-del" data-remove-g="${g.id}" title="Borrar gasto">×</button>
+          <div class="ticket-info"><div class="ticket-desc">${esc(g.descripcion)}</div>
+          <div class="ticket-meta">Pagó ${esc(pagador ? pagador.nombre : '—')} · entre ${g.participantesIds.length} persona${g.participantesIds.length===1?'':'s'}</div></div>
+          <div class="ticket-amount">${euros(g.importe)}</div></div>`;
+      }).join('')}
+    </section>
+
+    <section>
+      <p class="eyebrow">Balances</p>
+      ${balances.length === 0 ? '<p class="empty">Aún no hay nada que calcular.</p>' : balances.map(b => `
+        <div class="balance-row"><span>${esc(b.nombre)}</span>
+          <span class="balance-amt ${b.saldo > 0.004 ? 'pos' : (b.saldo < -0.004 ? 'neg' : '')}">
+            ${b.saldo > 0.004 ? 'le deben ' + euros(b.saldo) : (b.saldo < -0.004 ? 'debe ' + euros(-b.saldo) : 'en paz')}
+          </span></div>`).join('')}
+    </section>
+
+    <section>
+      <p class="eyebrow">Liquidación — quién paga a quién</p>
+      ${settlements.length === 0
+        ? (balances.length ? '<p class="all-settled">✓ Todo el mundo está en paz.</p>' : '<p class="empty">Añade gastos para calcular la liquidación.</p>')
+        : settlements.map(m => `<div class="settle"><div class="stamp-badge">PAGA</div>
+            <div class="settle-text"><b>${esc(m.de)}</b> → <b>${esc(m.a)}</b></div>
+            <div class="settle-amt">${euros(m.importe)}</div></div>`).join('')}
+    </section>
+
+    <footer><a class="reset-btn" href="${window.location.pathname}">Crear otro viaje nuevo</a></footer>
+  `;
+
+  if(!skipNameInput){
+    document.getElementById('tripName').addEventListener('change', e => mutar('renombrar', { nombre: e.target.value.trim() || 'Cuentas del viaje' }));
+  }
+  document.getElementById('syncBtn').addEventListener('click', cargarViaje);
+  document.getElementById('copyBtn').addEventListener('click', () => {
+    navigator.clipboard.writeText(link).then(() => {
+      const b = document.getElementById('copyBtn'); b.textContent = '¡Copiado!'; setTimeout(() => b.textContent = 'Copiar', 1500);
+    });
+  });
+  document.getElementById('addParticipanteBtn').addEventListener('click', () => {
+    const input = document.getElementById('newParticipante');
+    if(input.value.trim()) mutar('add_participante', { nombre: input.value.trim() });
+  });
+  document.getElementById('newParticipante').addEventListener('keydown', e => {
+    if(e.key === 'Enter' && e.target.value.trim()) mutar('add_participante', { nombre: e.target.value.trim() });
+  });
+  document.querySelectorAll('[data-remove-p]').forEach(btn => btn.addEventListener('click', () => mutar('remove_participante', { id: btn.getAttribute('data-remove-p') })));
+  document.querySelectorAll('[data-remove-g]').forEach(btn => btn.addEventListener('click', () => mutar('remove_gasto', { id: btn.getAttribute('data-remove-g') })));
+  const addGastoBtn = document.getElementById('addGastoBtn');
+  if(addGastoBtn){
+    addGastoBtn.addEventListener('click', () => {
+      const descripcion = document.getElementById('gastoDesc').value;
+      const importe = parseFloat(document.getElementById('gastoImporte').value);
+      const pagadorId = document.getElementById('gastoPagador').value;
+      const participantesIds = Array.from(document.querySelectorAll('.shareCheck:checked')).map(c => c.value);
+      if(!importe || importe <= 0){ alert('Pon un importe válido.'); return; }
+      if(!pagadorId){ alert('Indica quién pagó.'); return; }
+      if(participantesIds.length === 0){ alert('Marca al menos una persona entre quien se reparte.'); return; }
+      mutar('add_gasto', { descripcion: descripcion.trim() || 'Gasto sin nombre', importe: Math.round(importe * 100) / 100, pagadorId, participantesIds });
+    });
+  }
+}
+
+if(!codigo){ renderLanding(); } else { cargarViaje(); }
+</script>
+</body>
+</html>
