@@ -12,9 +12,9 @@ module.exports = async function handler(req, res) {
   try {
     await ensureSchema();
   } catch (e) {
+    console.error('Error conectando con Turso:', e);
     return res.status(500).json({
-      error:
-        'No se pudo conectar con la base de datos. Revisa las variables de entorno TURSO_DATABASE_URL y TURSO_AUTH_TOKEN en Vercel.',
+      error: 'No se pudo conectar con la base de datos: ' + e.message,
     });
   }
   const db = getClient();
