@@ -9,9 +9,6 @@ function generarId(prefijo) {
 }
 
 module.exports = async function handler(req, res) {
-  // Todo el handler va en un unico try/catch: cualquier fallo, sea el que
-  // sea, vuelve como JSON con el mensaje real en vez de tumbar la funcion
-  // y que el frontend solo vea "Error de red".
   try {
     await ensureSchema();
 
