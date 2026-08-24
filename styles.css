@@ -458,7 +458,7 @@ footer {
 body.landing-bg {
   min-height: 100vh;
   background-image: url('images/franquette.png');
-  background-size: 60vw;
+  background-size: max(60vw, 400px);
   background-position: center 80%;
   background-repeat: no-repeat;
 
