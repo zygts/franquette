@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cuentas del viaje</title>
+<title>La Franquette Viajes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@500;600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -88,6 +88,7 @@ function computeSettlements(balances){
 }
 
 function renderLanding(){
+  document.body.classList.add('landing-bg');
   document.getElementById('app').innerHTML = `
     <div class="landing">
       <h1>Cuentas del viaje</h1>
@@ -111,6 +112,7 @@ function renderLanding(){
 }
 
 function renderNoEncontrado(msg){
+  document.body.classList.remove('landing-bg');
   document.getElementById('app').innerHTML = `
     <div class="center-box">
       <p>${esc(msg || 'Viaje no encontrado')}</p>
@@ -126,6 +128,7 @@ async function mutar(accion, payload){
 }
 
 function renderApp(skipNameInput){
+  document.body.classList.remove('landing-bg');
   const app = document.getElementById('app');
   const balances = computeBalances();
   const settlements = computeSettlements(balances);
